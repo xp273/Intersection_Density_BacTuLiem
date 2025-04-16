@@ -96,7 +96,7 @@ function addBorderMap(map) {
 //Function to fetch road data (need tile server for rendering)
 function addRoadMap(map) {
     // GeoServer WFS URL for the vector data
-    const geoServerURL = 'http://localhost:8080/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=RoadAnalysis:Roads_BacTuLiem&outputFormat=application/json';
+    const geoServerURL = 'http://localhost:8080/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=RoadAnalysis:roads_bactuliem&outputFormat=application/json';
 
     // Use AJAX to fetch GeoJSON data from GeoServer
     $.ajax({
@@ -115,8 +115,13 @@ function addRoadMap(map) {
                         if (feature.properties) {
                             const popupContent = `
                                 OSMID: ${feature.properties.osm_id} <br>
+                                Name: ${feature.properties.name} <br>
+                                FClass: ${feature.properties.fclass} <br>
+                                Reference: ${feature.properties.ref} <br>
+                                Maxspeed: ${feature.properties.maxspeed} <br>
                                 Code: ${feature.properties.code} <br>
                                 One way: ${feature.properties.oneway} <br>
+                                Layer: ${feature.properties.layer} <br>
                                 Bridge: ${feature.properties.bridge} <br>
                                 Tunnel: ${feature.properties.tunnel} <br>
                             `;
@@ -206,13 +211,13 @@ addRoadMap(roadsLayer);
 addIntersectionMap(intersectionsLayer);
 addRasterDensityMap(rastersLayer);
 
-// //Show/hide road layer based on zoom level
-// map.on('zoomend', function() {
-//     //console.log('Zoom level changed:', map.getZoom());
-//     var zoomLevel = map.getZoom();
-//     if (zoomLevel > 13) {
-//         map.addLayer(roadsLayer);
-//     } else {
-//         map.removeLayer(roadsLayer);
-//     }
-// });
+//Show/hide road layer based on zoom level
+map.on('zoomend', function() {
+    //console.log('Zoom level changed:', map.getZoom());
+    var zoomLevel = map.getZoom();
+    if (zoomLevel > 13) {
+        map.addLayer(roadsLayer);
+    } else {
+        map.removeLayer(roadsLayer);
+    }
+});
