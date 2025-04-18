@@ -15,7 +15,7 @@
         PDO::ATTR_EMULATE_PREPARES   => false
     ];
     $pdo = new PDO($dsn, $user, $password, $opt);
-    $result = $pdo->query(' SELECT "ADM2_VI", "ADM2_PCODE", "ADM1_VI", "ADM1_PCODE", "ADM0_VI", ST_AsGeoJson(geom, 5) AS geojson FROM "regional_border_hanoi_bactuliem" ');
+    $result = $pdo->query(' SELECT "COUNTRY", "NAME_1", "NAME_2", "TYPE_2", ST_AsGeoJson(geom, 5) AS geojson FROM "border_bactuliem" ');
     $features=[];
     foreach($result as $row){
         unset($row['geom']);

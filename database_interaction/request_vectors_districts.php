@@ -2,7 +2,6 @@
     header('Content-Type: application/json');
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
-    #$server_name = 'PostgreSQL 15';
     $server_name = 'localhost';
     $database = 'Road_analysis';
     $port = '5432';
@@ -16,7 +15,7 @@
         PDO::ATTR_EMULATE_PREPARES   => false
     ];
     $pdo = new PDO($dsn, $user, $password, $opt);
-    $result = $pdo->query(' SELECT "fid", "intersection_density", ST_AsGeoJson(geom, 5) AS geojson FROM "intersection_density_wgs4326_wgs84" ');
+    $result = $pdo->query(' SELECT "id", "fid", "COUNTRY", "NAME_1", "NAME_2", "NAME_3", "TYPE_3", ST_AsGeoJson(geom, 5) AS geojson FROM "districts_bactuliem" ');
     $features=[];
     foreach($result as $row){
         unset($row['geom']);
@@ -28,7 +27,6 @@
     $featureCollection=["type"=>"FeatureCollection", "features"=>$features];
     echo json_encode($featureCollection, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     //File output
-    //file_put_contents('latest_results_density.json', json_encode($featureCollection,  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    //file_put_contents('latest_results_borders.json', json_encode($featureCollection,  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     //echo 'Dataprint complete!';
-
 

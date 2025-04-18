@@ -22,18 +22,21 @@ var OpenTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 
 //Data paths
 vectorBordersPath = "/database_interaction/request_vectors_borders.php";
+vectorDistrictsPath = "/database_interaction/request_vectors_districts.php";
 vectorRoadsPath = "/database_interaction/request_vectors_roads.php";
 vectorIntersectionsPath = "/database_interaction/request_vectors_intersections.php";
-rasterIntersectionDensityPath = "/database_interaction/request_rasters_density.php";
+vectorIntersectionCountsPath = "/database_interaction/request_vectors_intersections_density.php";
 
 //Data layers
 var bordersLayer = L.geoJson();
+var districtLayer = L.geoJson();
 var roadsLayer = L.geoJson();
 var intersectionsLayer = L.geoJson();
 var rastersLayer = L.geoJson();
 
 //Layer grouping
 var bordersGroup = L.layerGroup([bordersLayer]).addTo(map);
+//var districtGroup = L.layerGroup([districtLayer]).addTo(map);
 var roadGroup = L.layerGroup([roadsLayer]);
 var intersectionsGroup = L.layerGroup([intersectionsLayer]);
 var rasterGroup = L.layerGroup([rastersLayer]);
@@ -46,6 +49,7 @@ var baseMaps = {
 
 var overlayMaps = {
     "Borders": bordersGroup,
+    //"Districts": districtGroup,
     "Roads": roadGroup,
     "Intersections": intersectionsGroup,
     "Density": rasterGroup
@@ -57,6 +61,47 @@ var layerControls = L.control.layers(baseMaps, overlayMaps).addTo(map);
 function addBorderMap(map) {
     $.ajax({
         url: vectorBordersPath,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            //Parse GeoJSON data to the map
+            L.geoJSON(data,
+                {
+                style: function(feature) {
+                    // Customize styling based on feature properties
+                    return {
+                        color: 'blue', // Border color
+                        fillOpacity: 0, // Fill opacity
+                        };
+                    } 
+                }, 
+                {
+                onEachFeature: function (feature, layer) {
+                    // Customize the popup or marker appearance
+                        if (feature.properties) {
+                            // Customize the popup content
+                            const popupContent = `
+                                    <strong>${feature.properties.ADM2_VI}</strong>
+                                    - TP. ${feature.properties.ADM1_VI}
+                                    - ${feature.properties.ADM0_VI}
+                                `;
+                            layer.bindPopup(popupContent);
+                        }
+                    }
+                }).addTo(bordersLayer);
+            console.log('GeoJSON data added successfully.');
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch GeoJSON data:', error);
+            console.error('Server response:', xhr.responseText);
+        }
+    });
+}
+
+//Function to fetch district borders data
+function addDistrictMap(map) {
+    $.ajax({
+        url: vectorDistrictsPath,
         type: 'POST',
         dataType: 'json',
         success: function(data) {
@@ -76,14 +121,15 @@ function addBorderMap(map) {
                         if (feature.properties) {
                             // Customize the popup content
                             const popupContent = `
-                                    <strong>${feature.properties.ADM2_VI}</strong>
-                                    - TP. ${feature.properties.ADM1_VI}
-                                    - ${feature.properties.ADM0_VI}
+                                    FID: ${feature.properties.fid} -
+                                    ${feature.properties.TYPE_3} ${feature.properties.NAME_3} - 
+                                    ${feature.properties.NAME_2} -
+                                    ${feature.properties.NAME_1}
                                 `;
                             layer.bindPopup(popupContent);
                         }
                     }
-                }).addTo(bordersLayer);
+                }).addTo(districtLayer);
             console.log('GeoJSON data added successfully.');
         },
         error: function(xhr, status, error) {
@@ -110,20 +156,29 @@ function addRoadMap(map) {
 
             for (let i = 0; i < totalFeatures; i += chunkSize) {
                 let chunk = data.features.slice(i, i + chunkSize);
-                L.geoJSON({type: "FeatureCollection", features: chunk}, {
+                L.geoJSON({type: "FeatureCollection", features: chunk},
+                    // {
+                    // style: function(feature) {
+                    //     // Customize styling based on feature properties
+                    //     return {
+                    //         color: 'red', // Border color
+                    //         };
+                    //     } 
+                    // }, 
+                    {
                     onEachFeature: function (feature, layer) {
                         if (feature.properties) {
                             const popupContent = `
                                 OSMID: ${feature.properties.osm_id} <br>
+                                Code: ${feature.properties.code} <br>
                                 Name: ${feature.properties.name} <br>
-                                FClass: ${feature.properties.fclass} <br>
+                                F-Class: ${feature.properties.fclass} <br>
                                 Reference: ${feature.properties.ref} <br>
                                 Maxspeed: ${feature.properties.maxspeed} <br>
-                                Code: ${feature.properties.code} <br>
                                 One way: ${feature.properties.oneway} <br>
-                                Layer: ${feature.properties.layer} <br>
                                 Bridge: ${feature.properties.bridge} <br>
                                 Tunnel: ${feature.properties.tunnel} <br>
+                                Layer: ${feature.properties.layer} <br>
                             `;
                             layer.bindPopup(popupContent);
                         }
@@ -158,6 +213,12 @@ function addIntersectionMap(map) {
                         const popupContent = `
                             OSMID: ${feature.properties.osm_id} <br>
                             OSMID 2: ${feature.properties.osm_id_2} <br>
+                            Name: ${feature.properties.name} <br>
+                            Name 2: ${feature.properties.name_2} <br>
+                            One way: ${feature.properties.oneway} <br>
+                            Max speed: ${feature.properties.maxspeed} <br>
+                            Bridge: ${feature.properties.bridge} <br>
+                            Tunnel: ${feature.properties.tunnel} <br>  
                         `;
                         layer.bindPopup(popupContent);
                     }
@@ -177,21 +238,35 @@ function addIntersectionMap(map) {
 }
 
 //Function to fetch density data
-function addRasterDensityMap(map) {
+function addIntersectionCountsMap(map) {
     $.ajax({
-        url: rasterIntersectionDensityPath,
+        url: vectorIntersectionCountsPath,
         type: 'POST',
         dataType: 'json',
         success: function(data) {
             //Parse GeoJSON data to the map
-            L.geoJSON(data, {
+            L.geoJSON(data, 
+                // {
+                // style: function(feature) {
+                //     // Customize styling based on feature properties
+                //     return {
+                //         color: 'green', // Border color
+                //         fillOpacity: 0.5, // Fill opacity
+                //         weight: 2, // Border weight
+                //         };
+                //     } 
+                // },
+                {
                 onEachFeature: function (feature, layer) {
                     // Customize the popup or marker appearance
                         if (feature.properties) {
                             // Customize the popup content
                             const popupContent = `
-                                    FID : ${feature.properties.fid} <br>
-                                    Density: ${feature.properties.intersection_density} <br>
+                                    FID: ${feature.properties.fid} -
+                                    ${feature.properties.TYPE_3} ${feature.properties.NAME_3} - 
+                                    ${feature.properties.NAME_2} -
+                                    ${feature.properties.NAME_1} <br>
+                                    Intersections count: ${feature.properties.INTERSECTIONS} <br>
                                 `;
                             layer.bindPopup(popupContent);
                         }
@@ -206,10 +281,12 @@ function addRasterDensityMap(map) {
     });
 }
 
-addBorderMap(bordersLayer);
+
 addRoadMap(roadsLayer);
 addIntersectionMap(intersectionsLayer);
-addRasterDensityMap(rastersLayer);
+addIntersectionCountsMap(rastersLayer);
+//addDistrictMap(districtLayer);
+addBorderMap(bordersLayer);
 
 //Show/hide road layer based on zoom level
 map.on('zoomend', function() {
