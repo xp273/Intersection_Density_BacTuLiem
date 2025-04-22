@@ -17,7 +17,8 @@
     ];
     $pdo = new PDO($dsn, $user, $password, $opt);
     //$result = $pdo->query(' SELECT "osm_id", "osm_id_2", ST_AsGeoJson(geom, 5) AS geojson FROM "intersections_reprojected_bactuliem" ');
-    $result = $pdo->query(' SELECT "id", "name", "name_2", "osm_id", "osm_id_2", "oneway", "maxspeed", "bridge", "tunnel", ST_AsGeoJson(geom, 5) AS geojson FROM "road_intersections_bactuliem" ');
+    $result = $pdo->query(' SELECT "id", "name", "name_2", "osm_id", "osm_id_2", "oneway", "maxspeed", "bridge", "tunnel"
+                        , ST_AsGeoJson(geom, 5) AS geojson FROM "road_intersections_bactuliem" ');
     $features=[];
     foreach($result as $row){
         unset($row['geom']);

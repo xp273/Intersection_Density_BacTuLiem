@@ -15,7 +15,8 @@
         PDO::ATTR_EMULATE_PREPARES   => false
     ];
     $pdo = new PDO($dsn, $user, $password, $opt);
-    $result = $pdo->query(' SELECT "id", "fid", "COUNTRY", "NAME_1", "NAME_2", "NAME_3", "TYPE_3", ST_AsGeoJson(geom, 5) AS geojson FROM "districts_bactuliem" ');
+    $result = $pdo->query(' SELECT "id", "fid", "COUNTRY", "NAME_1", "NAME_2", "NAME_3", "TYPE_3"
+                        , ST_AsGeoJson(geom, 5) AS geojson FROM "districts_bactuliem" ');
     $features=[];
     foreach($result as $row){
         unset($row['geom']);

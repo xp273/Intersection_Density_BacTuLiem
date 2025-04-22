@@ -26,20 +26,32 @@ vectorDistrictsPath = "/database_interaction/request_vectors_districts.php";
 vectorRoadsPath = "/database_interaction/request_vectors_roads.php";
 vectorIntersectionsPath = "/database_interaction/request_vectors_intersections.php";
 vectorIntersectionCountsPath = "/database_interaction/request_vectors_intersections_density.php";
+vectorWaterAreaPath = "/database_interaction/request_vectors_water_area.php";
+vectorFloodWaterAreaPath = "/database_interaction/request_vectors_flooded_area.php";
+vectorFloodedRoadsPath = "/database_interaction/request_vectors_flooded_roads.php";
+vectorFloodedIntersectionsPath = "/database_interaction/request_vectors_flooded_intersections.php";
 
 //Data layers
 var bordersLayer = L.geoJson();
-var districtLayer = L.geoJson();
+var districtsLayer = L.geoJson();
 var roadsLayer = L.geoJson();
 var intersectionsLayer = L.geoJson();
-var rastersLayer = L.geoJson();
+//var rastersLayer = L.geoJson();
+var waterAreaLayer = L.geoJson();
+var waterAreaBufferedLayer = L.geoJson();
+var floodedRoadsLayer= L.geoJson();
+var floodedIntersectionsLayer = L.geoJson();
 
 //Layer grouping
 var bordersGroup = L.layerGroup([bordersLayer]).addTo(map);
-//var districtGroup = L.layerGroup([districtLayer]).addTo(map);
-var roadGroup = L.layerGroup([roadsLayer]);
+var districtsGroup = L.layerGroup([districtsLayer]);
+var roadsGroup = L.layerGroup([roadsLayer]);
 var intersectionsGroup = L.layerGroup([intersectionsLayer]);
-var rasterGroup = L.layerGroup([rastersLayer]);
+//var rasterGroup = L.layerGroup([rastersLayer]);
+var waterAreaGroup = L.layerGroup([waterAreaLayer]);
+var floodWaterAreaGroup = L.layerGroup([waterAreaBufferedLayer]);
+var floodedRoadsGroup = L.layerGroup([floodedRoadsLayer]);
+var floodedIntersectionsGroup = L.layerGroup([floodedIntersectionsLayer]);
 
 var baseMaps = {
     "OpenStreet Map": OSM1,
@@ -47,15 +59,18 @@ var baseMaps = {
     "OpenTopo Map": OpenTopo
 }
 
-var overlayMaps = {
+var roadDataElementsMaps = {
     "Borders": bordersGroup,
-    //"Districts": districtGroup,
-    "Roads": roadGroup,
+    "Districts": districtsGroup,
+    "Roads": roadsGroup,
     "Intersections": intersectionsGroup,
-    "Density": rasterGroup
+    "Water Area": waterAreaGroup,
+    "Flood Water Area (20m buffer)": waterAreaBufferedLayer,
+    "Flooded Roads": floodedRoadsGroup,
+    "Flooded Intersections": floodedIntersectionsGroup
 }
 
-var layerControls = L.control.layers(baseMaps, overlayMaps).addTo(map);
+var layerControls = L.control.layers(baseMaps, roadDataElementsMaps).addTo(map);
 
 //Function to fetch border data
 function addBorderMap(map) {
@@ -129,7 +144,7 @@ function addDistrictMap(map) {
                             layer.bindPopup(popupContent);
                         }
                     }
-                }).addTo(districtLayer);
+                }).addTo(districtsLayer);
             console.log('GeoJSON data added successfully.');
         },
         error: function(xhr, status, error) {
@@ -281,20 +296,202 @@ function addIntersectionCountsMap(map) {
     });
 }
 
+//Function to fetch water area data
+function addWaterAreaMap(map) {
+    $.ajax({
+        url: vectorWaterAreaPath,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            //Parse GeoJSON data to the map
+            L.geoJSON(data, 
+                {
+                onEachFeature: function (feature, layer) {
+                    // Customize the popup or marker appearance
+                        if (feature.properties) {
+                            // Customize the popup content
+                            const popupContent = `
+                                    OSMID: ${feature.properties.osm_id} <br>
+                                    Code: ${feature.properties.code} <br>
+                                    Name: ${feature.properties.name} <br>
+                                    F-Class: ${feature.properties.fclass} <br>
+                                `;
+                            layer.bindPopup(popupContent);
+                        }
+                    }
+                }).addTo(waterAreaLayer);
+            console.log('GeoJSON data added successfully.');
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch GeoJSON data:', error);
+            console.error('Server response:', xhr.responseText);
+        }
+    });
+}
+
+//Function to fetch flooded area (20m buffer) data
+function addFloodedAreaMap(map) {
+    $.ajax({
+        url: vectorFloodWaterAreaPath,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            //Parse GeoJSON data to the map
+            L.geoJSON(data, 
+                {
+                onEachFeature: function (feature, layer) {
+                    // Customize the popup or marker appearance
+                        if (feature.properties) {
+                            // Customize the popup content
+                            const popupContent = `
+                                    OSMID: ${feature.properties.osm_id} <br>
+                                    Code: ${feature.properties.code} <br>
+                                    Name: ${feature.properties.name} <br>
+                                    F-Class: ${feature.properties.fclass} <br>
+                                `;
+                            layer.bindPopup(popupContent);
+                        }
+                    }
+                }).addTo(waterAreaBufferedLayer);
+            console.log('GeoJSON data added successfully.');
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch GeoJSON data:', error);
+            console.error('Server response:', xhr.responseText);
+        }
+    });
+}
+
+//Function to fetch flooded area (20m buffer) data
+function addFloodedAreaMap(map) {
+    $.ajax({
+        url: vectorFloodWaterAreaPath,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            //Parse GeoJSON data to the map
+            L.geoJSON(data, 
+                {
+                onEachFeature: function (feature, layer) {
+                    // Customize the popup or marker appearance
+                        if (feature.properties) {
+                            // Customize the popup content
+                            const popupContent = `
+                                    OSMID: ${feature.properties.osm_id} <br>
+                                    Code: ${feature.properties.code} <br>
+                                    Name: ${feature.properties.name} <br>
+                                    F-Class: ${feature.properties.fclass} <br>
+                                `;
+                            layer.bindPopup(popupContent);
+                        }
+                    }
+                }).addTo(waterAreaBufferedLayer);
+            console.log('GeoJSON data added successfully.');
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch GeoJSON data:', error);
+            console.error('Server response:', xhr.responseText);
+        }
+    });
+}
+
+//Function to fetch flooded roads data
+function addFloodedRoadsMap(map) {
+    $.ajax({
+        url: vectorFloodedRoadsPath,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            //Parse GeoJSON data to the map
+            L.geoJSON(data, 
+                {
+                onEachFeature: function (feature, layer) {
+                    // Customize the popup or marker appearance
+                        if (feature.properties) {
+                            // Customize the popup content
+                            const popupContent = `
+                                OSMID: ${feature.properties.osm_id} <br>
+                                OSMID 2: ${feature.properties.osm_id_2} <br>
+                                Name: ${feature.properties.name} <br>
+                                Name 2: ${feature.properties.name_2} <br>
+                                One way: ${feature.properties.oneway} <br>
+                                Max speed: ${feature.properties.maxspeed} <br>
+                                Bridge: ${feature.properties.bridge} <br>
+                                Tunnel: ${feature.properties.tunnel} <br>  
+                            `;
+                            layer.bindPopup(popupContent);
+                        }
+                    }
+                }).addTo(floodedRoadsLayer);
+            console.log('GeoJSON data added successfully.');
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch GeoJSON data:', error);
+            console.error('Server response:', xhr.responseText);
+        }
+    });
+}
+
+//Function to fetch flooded intersections data
+function addFloodedIntersectionMap(map) {
+    $.ajax({
+        url: vectorFloodedIntersectionsPath,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            const floodedIntersectionCluster = L.markerClusterGroup();
+
+            //Parse GeoJSON data to the map
+            const geoJsonLayer = L.geoJSON(data, 
+                {
+                onEachFeature: function (feature, layer) {
+                    // Customize the popup or marker appearance
+                        if (feature.properties) {
+                            // Customize the popup content
+                            const popupContent = `
+                                OSMID: ${feature.properties.osm_id} <br>
+                                OSMID 2: ${feature.properties.osm_id_2} <br>
+                                Name: ${feature.properties.name} <br>
+                                Name 2: ${feature.properties.name_2} <br>
+                                One way: ${feature.properties.oneway} <br>
+                                Max speed: ${feature.properties.maxspeed} <br>
+                                Bridge: ${feature.properties.bridge} <br>
+                                Tunnel: ${feature.properties.tunnel} <br>  
+                            `;
+                            layer.bindPopup(popupContent);
+                        }
+                    }
+                });
+                
+                floodedIntersectionCluster.addLayer(geoJsonLayer);
+                map.addLayer(floodedIntersectionCluster);
+
+            console.log('GeoJSON data added successfully.');
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to fetch GeoJSON data:', error);
+            console.error('Server response:', xhr.responseText);
+        }
+    });
+}
 
 addRoadMap(roadsLayer);
 addIntersectionMap(intersectionsLayer);
-addIntersectionCountsMap(rastersLayer);
-//addDistrictMap(districtLayer);
+//addIntersectionCountsMap(rastersLayer);
+addDistrictMap(districtsLayer);
 addBorderMap(bordersLayer);
+addWaterAreaMap(waterAreaLayer);
+addFloodedAreaMap(waterAreaBufferedLayer);
+addFloodedRoadsMap(floodedRoadsLayer);
+addFloodedIntersectionMap(floodedIntersectionsLayer);
 
 //Show/hide road layer based on zoom level
-map.on('zoomend', function() {
-    //console.log('Zoom level changed:', map.getZoom());
-    var zoomLevel = map.getZoom();
-    if (zoomLevel > 13) {
-        map.addLayer(roadsLayer);
-    } else {
-        map.removeLayer(roadsLayer);
-    }
-});
+// map.on('zoomend', function() {
+//     //console.log('Zoom level changed:', map.getZoom());
+//     var zoomLevel = map.getZoom();
+//     if (zoomLevel > 13) {
+//         map.addLayer(roadsLayer);
+//     } else {
+//         map.removeLayer(roadsLayer);
+//     }
+// });

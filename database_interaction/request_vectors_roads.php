@@ -16,7 +16,9 @@
         PDO::ATTR_EMULATE_PREPARES   => false
     ];
     $pdo = new PDO($dsn, $user, $password, $opt);
-    $result = $pdo->query(' SELECT "id", "osm_id", "code", "name", "fclass", "ref", "maxspeed", "oneway", "bridge", "tunnel", "layer", ST_AsGeoJson(geom, 5) AS geojson FROM "roads_bactuliem" ');
+    $result = $pdo->query(' SELECT "id", "osm_id", "code", "name", "fclass", "ref"
+                        , "maxspeed", "oneway", "bridge", "tunnel", "layer"
+                        , ST_AsGeoJson(geom, 5) AS geojson FROM "roads_bactuliem" ');
     $features=[];
     foreach($result as $row){
         unset($row['geom']);
