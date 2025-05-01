@@ -11,13 +11,15 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
         <link rel="stylesheet" href="https://unpkg.com/leaflet.vectorgrid/dist/leaflet.vectorgrid.css" />
-        <link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.min.css">
+        <link rel="stylesheet" href="node_modules/jquery-ui-1.12.1.custom/jquery-ui.min.css">
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+        <link rel="stylesheet" href="css/style.css">
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="https://rawgithub.com/ismyrnow/Leaflet.groupedlayercontrol/master/src/leaflet.groupedlayercontrol.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script src="jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+        <script src="node_modules/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://unpkg.com/geojson-vt@3.0.0/geojson-vt.js"></script>
         <script src="https://unpkg.com/leaflet.vectorgrid/dist/leaflet.vectorgrid.js"></script>
@@ -39,9 +41,15 @@
         </style>       
     </head>
     <body>
-        <div id="map"></div>
-            <script src="app.js">       
-                
-            </script>
+
+        <div class="wrapper" style="background-color: rgb(124, 243, 144);border-style: double;">
+            <!-- <div class="header" id="header" style="font-family: Arial, Helvetica, sans-serif; text-align:center; font-size: larger; font-weight: bold;"> Phân tích mức độ ảnh hưởng của ngập úng lên hệ thống đường và các nút giao thông trên địa bàn Bắc Từ Liêm
+            </div> -->
+        
+            <div id="container">
+                <div id="map"></div>
+                <script src="app.js"></script>
+            </div>
+        </div>
     </body>
 </html>
