@@ -29,25 +29,22 @@
                 fetch('/database_interaction/request_vectors_borders').
                 then(response => response.json());
             };
-        </script>    
-        <style>
-            #map{
-                position: absolute;
-                width: 100%;
-                height: 100%; 
-            }
-        </style>       
+        </script>         
     </head>
+    
     <body>
+        <div class="wrapper">
+            <div class="header" id="header" > Phân tích mức độ ảnh hưởng của ngập úng lên hệ thống đường và các nút giao thông trên địa bàn Bắc Từ Liêm</div>
 
-        <div class="wrapper" style="background-color: rgb(124, 243, 144);border-style: double;">
-            <!-- <div class="header" id="header" style="font-family: Arial, Helvetica, sans-serif; text-align:center; font-size: larger; font-weight: bold;"> Phân tích mức độ ảnh hưởng của ngập úng lên hệ thống đường và các nút giao thông trên địa bàn Bắc Từ Liêm
-            </div> -->
-        
             <div id="container">
                 <div id="map"></div>
                 <script src="app.js"></script>
             </div>
+
+            <div class="python_output" id="python_output">
+                <img src="python/output/intersection_data.html" alt="Thong ke">
+            </div>
         </div>
     </body>
+
 </html>
