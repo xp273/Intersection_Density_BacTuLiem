@@ -33,18 +33,12 @@
     </head>
     
     <body>
-        <div class="wrapper">
-            <div class="header" id="header" > Phân tích mức độ ảnh hưởng của ngập úng lên hệ thống đường và các nút giao thông trên địa bàn Bắc Từ Liêm</div>
+        <div class="header" id="header" > Phân tích mức độ ảnh hưởng của ngập úng lên hệ thống đường và các nút giao thông trên địa bàn Bắc Từ Liêm</div>    
+            <button id="stat_button" onclick="location.href = '/statistics.php'">Statistics</button>
 
-            <div id="container">
-                <div id="map"></div>
-                <script src="app.js"></script>
+            <div id="map">
+            <script src="app.js"></script>
             </div>
-
-            <div class="python_output" id="python_output">
-                <img src="python/output/intersection_data.html" alt="Thong ke">
-            </div>
-        </div>
     </body>
 
 </html>
