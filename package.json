@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "leaflet.featuregroup.subgroup": "^1.0.2"
+  }
+}
