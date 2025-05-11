@@ -53,7 +53,7 @@
             </nav>
 
             <div id="map">
-            <script src="app.js"></script>
+                <script src="app.js"></script>
             </div>
     </body>
 </html>
